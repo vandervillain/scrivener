@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>scrivener</title>
+    <link href="styles.css" rel="stylesheet" type="text/css">
+    <script>
+      var exports = {};
+
+      function start() {
+        var lib = new Lib();
+      }
+    </script>
+    <script
+    src="https://code.jquery.com/jquery-3.2.1.min.js"
+    integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+    crossorigin="anonymous"></script>
+    <script src="lib.js"></script>
+  </head>
+  <body onload="start()">
+    <div id="header">
+      <div class="left">
+        <div class="undo-redo">
+          <span class="glyphicons glyphicons-undo"></span>
+          <span class="glyphicons glyphicons-redo"></span>
+        </div>
+        <div class="tool-selector">
+          <span class="glyphicons glyphicons-pen"></span>
+          <div class="tool-options">
+              <span class="glyphicons glyphicons-pen"></span>
+              <span class="glyphicons glyphicons-vector-path-square"></span>
+              <span class="glyphicons glyphicons-font"></span>
+              <span class="glyphicons glyphicons-stats"></span>
+              <div class="color-selector">
+                  <span class="glyphicons glyphicons-tint"></span>
+                  <input type="color" pattern="^#+([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$" />
+                  <div class="recent-colors"></div>
+              </div>
+          </div>
+        </div>
+      </div>
+      <div class="right">
+        <div class='clear-page'>
+          <span class="glyphicons glyphicons-ban-circle clear-page"></span>
+        </div>
+        <div class="page-selector">
+          <span class="glyphicons glyphicons-arrow-left prev-page disabled"></span>
+          <span class="curr-page">1</span>
+          <span class="glyphicons glyphicons-arrow-right next-page"></span>
+        </div>
+        <div class="exit-app">
+          <span class="glyphicons glyphicons-remove"></span>
+        </div>
+      </div>
+    </div>
+    <div id="content">
+      <canvas data-page="0"></canvas>
+    </div>
+  </body>
+</html>

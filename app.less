@@ -1,0 +1,127 @@
+@nav: #222;
+@blue: #0af;
+@light-blue: #ccf;
+@disabled-blue: #aa9;
+
+html {
+    font-family: Arial, Helvetica, sans-serif;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    touch-action: none;
+}
+
+.glyphicons {
+    font-size: 34px;
+    color: @blue;
+    cursor: pointer;
+
+    &.disabled {
+        color: @disabled-blue;
+        cursor: default;
+    }
+
+    &:not(.disabled):hover {
+        background-color: @blue;
+        color: @light-blue;
+    }
+}
+
+body {
+    background-color: black;
+    height: 100%;
+    margin: 0;
+    padding: 0;    
+
+    #header {
+        height: 46px;
+        width: 100%;
+        background-color: @nav;
+        margin: 0;
+        padding: 0;  
+        
+        > div {
+            &.left {
+                float: left;
+            }
+            &.right {
+                float: right;
+            }
+            > div {
+                float: left;
+                margin: 0px 10px;
+            }
+        }
+
+        .undo-redo {
+            margin-left: 0px;
+        }
+
+        .tool-selector {
+            position: relative;
+
+            div.tool-options {
+                display: none;
+                position: absolute;
+                z-index: 999;
+                background-color: @nav;
+
+                &.open {
+                    display: block;
+                }
+
+                .color-selector {
+                    position: relative;
+
+                    .recent-colors {
+                        display: inline-flex;
+                        position: absolute;
+                        top: 0;
+                        left: 50px;
+                        background-color: @nav;
+
+                        span {
+                            display: inline-block;
+                        }
+                    }
+
+                    input[type=color] {
+                        display: none;
+                    }
+                }
+            }
+        }
+
+        .page-selector {
+            .curr-page {
+                display: inline-block;
+                line-height: 46px;
+                font-size: 30px;
+                color: @blue;
+            }
+        }
+
+        .exit-app {
+            margin-right: 0px;
+
+            .glyphicons {
+                color: black;
+
+                &:hover {
+                    background-color: transparent;
+                }
+            }
+        }
+    }
+
+    #content {
+        width: 100%;
+        margin: 0 auto;
+        padding: 0;
+
+        canvas {
+            cursor: crosshair;
+            position: fixed;
+        }
+    }
+}
