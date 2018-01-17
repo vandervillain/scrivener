@@ -4,11 +4,10 @@ var Page = /** @class */ (function () {
         this.canvas = canvas;
         this.ctx = canvas.getContext('2d');
         this.history = [];
+        this.historyIndex = -1;
     }
     Page.prototype.applyListeners = function (tool) {
-        var self = this;
-        tool.currCanvas = this.canvas;
-        tool.currCtx = this.ctx;
+        tool.currPage = this;
         this.canvas.addEventListener('mousedown', tool.mousedown, false);
         this.canvas.addEventListener('mousemove', tool.mousemove, false);
         this.canvas.addEventListener('mouseup', tool.mouseup, false);
@@ -17,14 +16,36 @@ var Page = /** @class */ (function () {
         this.canvas.addEventListener('touchend', tool.touchend, false);
     };
     Page.prototype.removeListeners = function (tool) {
-        tool.currCanvas = null;
-        tool.currCtx = null;
+        tool.currPage = null;
         this.canvas.removeEventListener('mousedown', tool.mousedown, false);
         this.canvas.removeEventListener('mousemove', tool.mousemove, false);
         this.canvas.removeEventListener('mouseup', tool.mouseup, false);
         this.canvas.removeEventListener('touchstart', tool.touchstart, false);
         this.canvas.removeEventListener('touchmove', tool.touchmove, false);
         this.canvas.removeEventListener('touchend', tool.touchend, false);
+    };
+    Page.prototype.clear = function (bgColor) {
+        this.ctx.fillStyle = bgColor;
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    };
+    Page.prototype.undo = function (bgColor) {
+        this.clear(bgColor);
+        if (this.historyIndex > -1) {
+            this.historyIndex--;
+            for (var i = 0; i < this.history.length; i++) {
+                if (i <= this.historyIndex) {
+                    Tool.redraw(this.history[i], this);
+                }
+                else
+                    break;
+            }
+        }
+    };
+    Page.prototype.redo = function () {
+        if (this.history[this.historyIndex + 1]) {
+            this.historyIndex++;
+            Tool.redraw(this.history[this.historyIndex], this);
+        }
     };
     return Page;
 }());

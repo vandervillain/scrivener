@@ -35,6 +35,14 @@ export class Lib {
         self.initColorSelect();
         self.initToolSelect();
         
+        self.header.find('.undo').on('click', function(e) {
+            self.getCurrPage().undo(self.config.bgColor);
+        })
+
+        self.header.find('.redo').on('click', function(e) {
+            self.getCurrPage().redo();
+        })
+
         self.header.find('.clear-page').on('click', e => {
             self.clear();
         });
@@ -177,7 +185,7 @@ export class Lib {
         if (existingPage) {
             // init existing page
             $(existingPage.canvas).show();
-            self.getCurrPage().applyListeners(self.config.tool);
+            existingPage.applyListeners(self.config.tool);
         }
         else {
             // create new page
@@ -200,12 +208,7 @@ export class Lib {
 
     clear() {
         this.refit();
-
-        var canvas = <HTMLCanvasElement>$('canvas:visible')[0],
-            ctx = canvas.getContext('2d');
-
-        ctx.fillStyle= this.config.bgColor;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        this.getCurrPage().clear(this.config.bgColor);
     }
 }
 

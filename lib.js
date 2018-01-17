@@ -25,6 +25,12 @@ var Lib = /** @class */ (function () {
         // init UI events
         self.initColorSelect();
         self.initToolSelect();
+        self.header.find('.undo').on('click', function (e) {
+            self.getCurrPage().undo(self.config.bgColor);
+        });
+        self.header.find('.redo').on('click', function (e) {
+            self.getCurrPage().redo();
+        });
         self.header.find('.clear-page').on('click', function (e) {
             self.clear();
         });
@@ -131,7 +137,7 @@ var Lib = /** @class */ (function () {
         if (existingPage) {
             // init existing page
             $(existingPage.canvas).show();
-            self.getCurrPage().applyListeners(self.config.tool);
+            existingPage.applyListeners(self.config.tool);
         }
         else {
             // create new page
@@ -152,9 +158,7 @@ var Lib = /** @class */ (function () {
     };
     Lib.prototype.clear = function () {
         this.refit();
-        var canvas = $('canvas:visible')[0], ctx = canvas.getContext('2d');
-        ctx.fillStyle = this.config.bgColor;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        this.getCurrPage().clear(this.config.bgColor);
     };
     return Lib;
 }());
