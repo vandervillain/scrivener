@@ -83,9 +83,6 @@ body #header .page-selector .curr-page {
 body #header .exit-app {
   margin-right: 0px;
 }
-body #header .exit-app .glyphicons:hover {
-  background-color: transparent;
-}
 body #content {
   width: 100%;
   margin: 0 auto;
