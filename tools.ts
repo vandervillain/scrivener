@@ -3,77 +3,82 @@ class Tool {
     color: string;
     width: number;
     started: boolean;
+    // relation to current page
+    currCanvas: HTMLCanvasElement;
+    currCtx: CanvasRenderingContext2D;
+    // events
+    mousedown: EventListener;
+    mousemove: EventListener;
+    mouseup: EventListener;
+    touchstart: EventListener;
+    touchmove: EventListener;
+    touchend: EventListener;
 
     constructor(type: ToolType, color: string, width: number) {
+        var self = this;
         this.type = type;
         this.color = color;
         this.width = width;
         this.started = false;
+
+        this.mousedown = function(e: MouseEvent) {
+            var x = e.pageX - self.currCanvas.offsetLeft, y = e.pageY - self.currCanvas.offsetTop;
+            self.start.call(self, x, y);
+        };
+
+        this.mousemove = function(e: MouseEvent) {
+            var x = e.pageX - self.currCanvas.offsetLeft, y = e.pageY - self.currCanvas.offsetTop;
+            self.move.call(self, x, y);
+        };
+    
+	    this.mouseup = function(e: MouseEvent) {
+            self.end.call(self);
+        };
+
+	    this.touchstart = function(e: TouchEvent) {
+            var x = e.touches[0].pageX - self.currCanvas.offsetLeft, y = e.touches[0].pageY - self.currCanvas.offsetTop;
+            self.start.call(self, x, y);
+        };
+
+	    this.touchmove = function(e: TouchEvent) {
+            var x = e.touches[0].pageX - self.currCanvas.offsetLeft, y = e.touches[0].pageY - self.currCanvas.offsetTop;
+            self.move.call(self, x, y);
+        };
+    
+	    this.touchend = function(e: TouchEvent) {
+            self.end.call(self);
+        };
     }
 
-    init() {
-        var self = this,
-            canvas = <HTMLCanvasElement>$('canvas:visible')[0],
-            ctx = canvas.getContext('2d');
-        
-        canvas.addEventListener('mousedown', function(e) {
-            var x = e.pageX - canvas.offsetLeft, y = e.pageY - canvas.offsetTop;
-            self.start(ctx, x, y);
-        }, false);
+    start(x: number, y: number) {}
 
-        canvas.addEventListener('mousemove', function(e) {
-            var x = e.pageX - canvas.offsetLeft, y = e.pageY - canvas.offsetTop;
-            self.move(ctx, x, y);
-        }, false);
-    
-	    canvas.addEventListener('mouseup', function(e) {
-            self.end(ctx);
-        }, false);
+    move(x: number, y: number) {}
 
-        // Touch Events
-	    canvas.addEventListener('touchstart', function(e) {
-            var x = e.touches[0].pageX - canvas.offsetLeft, y = e.touches[0].pageY - canvas.offsetTop;
-            self.start(ctx, x, y);
-        }, false);
-
-	    canvas.addEventListener('touchmove', function(e) {
-            var x = e.touches[0].pageX - canvas.offsetLeft, y = e.touches[0].pageY - canvas.offsetTop;
-            self.move(ctx, x, y);
-        }, false);
-    
-	    canvas.addEventListener('touchend', function(e) {
-            self.end(ctx);
-        }, false);
-    }
-
-    start(ctx: CanvasRenderingContext2D, x: number, y: number) {}
-
-    move(ctx: CanvasRenderingContext2D, x: number, y: number) {}
-
-    end(ctx: CanvasRenderingContext2D) {}
+    end() {}
 }
 
 class Pen extends Tool {
+    
     constructor(color: string, width: number) { super(ToolType.Pen, color, width); }
 
-    start(ctx: CanvasRenderingContext2D, x: number, y: number) {
-        ctx.strokeStyle = this.color;
-        ctx.lineWidth = this.width;
-        ctx.beginPath();
-        ctx.moveTo(x, y);
+    start(x: number, y: number) {
+        this.currCtx.strokeStyle = this.color;
+        this.currCtx.lineWidth = this.width;
+        this.currCtx.beginPath();
+        this.currCtx.moveTo(x, y);
 
         this.started = true;
     }
 
-    move(ctx: CanvasRenderingContext2D, x: number, y: number) {
+    move(x: number, y: number) {
         if (this.started) {
-            ctx.lineTo(x, y);
-            ctx.stroke();
+            this.currCtx.lineTo(x, y);
+            this.currCtx.stroke();
         }
     }
 
-    end(ctx: CanvasRenderingContext2D) {
-        ctx.closePath();
+    end() {
+        this.currCtx.closePath();
         this.started = false;
     }
 }

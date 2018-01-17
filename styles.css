@@ -16,7 +16,7 @@ html {
 }
 .glyphicons:not(.disabled):hover {
   background-color: #0af;
-  color: #ccf;
+  color: #eff;
 }
 body {
   background-color: black;
@@ -30,6 +30,7 @@ body #header {
   background-color: #222;
   margin: 0;
   padding: 0;
+  user-select: none;
 }
 body #header > div.left {
   float: left;
@@ -77,12 +78,10 @@ body #header .page-selector .curr-page {
   line-height: 46px;
   font-size: 30px;
   color: #0af;
+  cursor: default;
 }
 body #header .exit-app {
   margin-right: 0px;
-}
-body #header .exit-app .glyphicons {
-  color: #aa9;
 }
 body #header .exit-app .glyphicons:hover {
   background-color: transparent;

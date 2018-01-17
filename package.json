@@ -9,8 +9,10 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/underscore": "^1.8.7",
     "electron": "^1.7.9",
-    "jquery": "^3.2.1"
+    "jquery": "^3.2.1",
+    "underscore": "^1.8.3"
   },
   "dependencies": {
     "@types/jquery": "^3.2.16"

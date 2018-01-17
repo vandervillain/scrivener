@@ -1,6 +1,6 @@
 @nav: #222;
 @blue: #0af;
-@light-blue: #ccf;
+@light-blue: #eff;
 @disabled-blue: #aa9;
 
 html {
@@ -38,7 +38,8 @@ body {
         width: 100%;
         background-color: @nav;
         margin: 0;
-        padding: 0;  
+        padding: 0;
+        user-select: none;
         
         > div {
             &.left {
@@ -98,6 +99,7 @@ body {
                 line-height: 46px;
                 font-size: 30px;
                 color: @blue;
+                cursor: default;
             }
         }
 
@@ -105,7 +107,6 @@ body {
             margin-right: 0px;
 
             .glyphicons {
-                color: black;
 
                 &:hover {
                     background-color: transparent;

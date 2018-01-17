@@ -1,22 +1,30 @@
 "use strict";
 exports.__esModule = true;
 var $ = require("jquery");
+var _ = require("underscore");
 var electron_1 = require("electron");
 var Lib = /** @class */ (function () {
     function Lib() {
         var self = this;
         this.header = $('#header');
         this.content = $('#content');
+        var defaultColor = '#ffffff';
         this.config = {
+            color: defaultColor,
             bgColor: '#000000',
-            recentColors: [],
-            page: 0
+            recentColors: [defaultColor],
+            page: 1,
+            tool: new Pen(defaultColor, 3)
         };
-        this.history = [];
+        // init page
+        this.pages = [];
+        var page = self.newPage(1);
+        page.applyListeners(self.config.tool);
         self.refit();
         window.addEventListener('resize', self.refit.bind(self), false);
-        self.initColor();
-        self.initTool();
+        // init UI events
+        self.initColorSelect();
+        self.initToolSelect();
         self.header.find('.clear-page').on('click', function (e) {
             self.clear();
         });
@@ -44,12 +52,11 @@ var Lib = /** @class */ (function () {
         }
         return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
     };
-    Lib.prototype.initColor = function () {
-        var self = this, defaultColor = '#ffffff', toolToggle = $('.tool-selector > span.glyphicons'), colorToggle = $('.tool-options .color-selector span.glyphicons'), colorSelector = $('.tool-options .color-selector input[type="color"]');
-        self.config.color = defaultColor;
+    Lib.prototype.initColorSelect = function () {
+        var self = this, toolToggle = $('.tool-selector > span.glyphicons'), colorToggle = $('.tool-options .color-selector span.glyphicons'), colorSelector = $('.tool-options .color-selector input[type="color"]');
         colorToggle.css('color', self.config.color);
         toolToggle.css('color', self.config.color);
-        colorSelector.val(defaultColor);
+        colorSelector.val(self.config.color);
         colorToggle.on('click', function (e) {
             colorSelector.click();
         });
@@ -77,9 +84,11 @@ var Lib = /** @class */ (function () {
         div.empty();
         var reversed = self.config.recentColors.slice(0).reverse();
         for (var c in reversed) {
-            var span = $('<span class="glyphicons glyphicons-stop">');
-            span.css('color', reversed[c]);
-            div.append(span);
+            if (c != '0') {
+                var span = $('<span class="glyphicons glyphicons-stop">');
+                span.css('color', reversed[c]);
+                div.append(span);
+            }
         }
         div.find('span').on('click', function (e) {
             var color = self.rgb2hex($(this).css('color'));
@@ -87,40 +96,50 @@ var Lib = /** @class */ (function () {
             self.header.find('.open').removeClass('open');
         });
     };
-    Lib.prototype.initTool = function () {
-        var self = this;
-        var pen = new Pen(self.config.color, 3);
-        pen.init();
-        self.config.tool = pen;
+    Lib.prototype.initToolSelect = function () {
         var defaultColor = '#ffffff', toolToggle = $('.tool-selector > span.glyphicons'), toolOptions = $('.tool-selector .tool-options');
         toolToggle.on('click', function (e) {
             toolOptions.toggleClass('open');
         });
     };
+    Lib.prototype.getPage = function (pageNum) {
+        return _.find(this.pages, function (p) { return p.id == pageNum; });
+    };
+    Lib.prototype.getCurrPage = function () {
+        var self = this;
+        return _.find(this.pages, function (p) { return p.id == self.config.page; });
+    };
+    Lib.prototype.newPage = function (pageNum) {
+        var self = this;
+        // create new canvas
+        var newCanvas = $('<canvas data-page="' + pageNum + '">');
+        self.content.append(newCanvas);
+        var canvas = newCanvas[0];
+        canvas.height = this.content.height();
+        canvas.width = this.content.width();
+        var page = new Page(pageNum, canvas);
+        self.pages.push(page);
+        return page;
+    };
     Lib.prototype.goToPage = function (pageNum) {
         var self = this;
-        var currCanvas = $('canvas:visible');
-        var existingCanvas = $('canvas[data-page="' + pageNum + '"]');
-        if (existingCanvas.length > 0) {
-            // init existing canvas
-            currCanvas.hide();
-            existingCanvas.show();
-            self.config.tool.init();
+        // un-init old
+        var oldPage = self.getCurrPage();
+        oldPage.removeListeners(self.config.tool);
+        $(oldPage.canvas).hide();
+        var existingPage = self.getPage(pageNum);
+        if (existingPage) {
+            // init existing page
+            $(existingPage.canvas).show();
+            self.getCurrPage().applyListeners(self.config.tool);
         }
         else {
-            // create new canvas
-            var newCanvas = $('<canvas data-page="' + pageNum + '">');
-            // init new canvas
-            currCanvas.hide();
-            self.content.append(newCanvas);
-            self.config.tool.init();
-            var canvas = $('canvas:visible')[0];
-            canvas.height = this.content.height();
-            canvas.width = this.content.width();
+            // create new page
+            self.newPage(pageNum).applyListeners(self.config.tool);
         }
         self.config.page = pageNum;
-        self.header.find('.curr-page').text(self.config.page + 1);
-        if (self.config.page == 0)
+        self.header.find('.curr-page').text(self.config.page);
+        if (self.config.page <= 1)
             self.header.find('.prev-page').addClass('disabled');
         else
             self.header.find('.prev-page').removeClass('disabled');
