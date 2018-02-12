@@ -35,13 +35,17 @@ class Page {
 	    this.canvas.removeEventListener('touchend', tool.touchend, false);
     }
 
-    clear(bgColor: string) {
-        this.ctx.fillStyle= bgColor;
+    clear() {
+        var currFillStyle = this.ctx.fillStyle;
+
+        this.ctx.fillStyle = 'rgba(0,0,0,1)';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+        this.ctx.fillStyle = currFillStyle;
     }
 
-    undo(bgColor: string) {
-        this.clear(bgColor);
+    undo() {
+        this.clear();
 
         if (this.historyIndex > -1) {
             this.historyIndex--;

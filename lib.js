@@ -8,25 +8,27 @@ var Lib = /** @class */ (function () {
         var self = this;
         this.header = $('#header');
         this.content = $('#content');
-        var defaultColor = '#ffffff';
+        var defaultColor = '#ffffff', defaultWidth = 3;
         this.config = {
             color: defaultColor,
+            width: defaultWidth,
             bgColor: '#000000',
             recentColors: [defaultColor],
             page: 1,
-            tool: new Pen(defaultColor, 3)
+            tool: new Pen(defaultColor, defaultWidth)
         };
-        // init page
+        $('body').css('background-color', this.config.bgColor);
+        // init page and tool
         this.pages = [];
         var page = self.newPage(1);
-        page.applyListeners(self.config.tool);
+        self.config.tool.init(page);
         self.refit();
         window.addEventListener('resize', self.refit.bind(self), false);
         // init UI events
         self.initColorSelect();
         self.initToolSelect();
         self.header.find('.undo').on('click', function (e) {
-            self.getCurrPage().undo(self.config.bgColor);
+            self.getCurrPage().undo();
         });
         self.header.find('.redo').on('click', function (e) {
             self.getCurrPage().redo();
@@ -103,10 +105,29 @@ var Lib = /** @class */ (function () {
         });
     };
     Lib.prototype.initToolSelect = function () {
-        var defaultColor = '#ffffff', toolToggle = $('.tool-selector > span.glyphicons'), toolOptions = $('.tool-selector .tool-options');
+        var self = this, defaultColor = '#ffffff', toolToggle = $('.tool-selector > span.glyphicons'), toolOptions = $('.tool-selector .tool-options');
         toolToggle.on('click', function (e) {
             toolOptions.toggleClass('open');
         });
+        toolOptions.find('.pen').on('click', function (e) { return self.toolChange(ToolType.Pen, this); });
+        toolOptions.find('.line').on('click', function (e) { return self.toolChange(ToolType.Line, this); });
+        toolOptions.find('.box').on('click', function (e) { return self.toolChange(ToolType.Box, this); });
+        toolOptions.find('.text').on('click', function (e) { return self.toolChange(ToolType.Text, this); });
+        toolOptions.find('.graph').on('click', function (e) { return self.toolChange(ToolType.Graph, this); });
+    };
+    Lib.prototype.toolChange = function (type, el) {
+        // remove any temp tool canvases
+        $('canvas.temp').remove();
+        // set tool label
+        var label = $('.tool-selector .label:first');
+        label[0].className = el.className;
+        label.addClass('label');
+        this.header.find('.open').removeClass('open');
+        // init new tool
+        this.config.tool.destroy();
+        var tool = Tool.ToolInstance(type, this.config.color, this.config.width);
+        this.config.tool = tool;
+        this.config.tool.init(this.getCurrPage());
     };
     Lib.prototype.getPage = function (pageNum) {
         return _.find(this.pages, function (p) { return p.id == pageNum; });
@@ -117,12 +138,15 @@ var Lib = /** @class */ (function () {
     };
     Lib.prototype.newPage = function (pageNum) {
         var self = this;
+        this.content.height(window.innerHeight - this.header.height());
         // create new canvas
         var newCanvas = $('<canvas data-page="' + pageNum + '">');
         self.content.append(newCanvas);
         var canvas = newCanvas[0];
-        canvas.height = this.content.height();
-        canvas.width = this.content.width();
+        canvas.height = this.content.height() * 2;
+        canvas.width = this.content.width() * 2;
+        canvas.style.height = this.content.height() + 'px';
+        canvas.style.width = this.content.width() + 'px';
         var page = new Page(pageNum, canvas);
         self.pages.push(page);
         return page;
@@ -131,17 +155,18 @@ var Lib = /** @class */ (function () {
         var self = this;
         // un-init old
         var oldPage = self.getCurrPage();
-        oldPage.removeListeners(self.config.tool);
+        self.config.tool.destroy();
         $(oldPage.canvas).hide();
         var existingPage = self.getPage(pageNum);
         if (existingPage) {
             // init existing page
             $(existingPage.canvas).show();
-            existingPage.applyListeners(self.config.tool);
+            self.config.tool.init(existingPage);
         }
         else {
             // create new page
-            self.newPage(pageNum).applyListeners(self.config.tool);
+            var newPage = self.newPage(pageNum);
+            self.config.tool.init(newPage);
         }
         self.config.page = pageNum;
         self.header.find('.curr-page').text(self.config.page);
@@ -153,12 +178,13 @@ var Lib = /** @class */ (function () {
     Lib.prototype.refit = function () {
         var canvas = $('canvas:visible')[0];
         this.content.height(window.innerHeight - this.header.height());
-        canvas.height = this.content.height();
-        canvas.width = this.content.width();
+        canvas.height = this.content.height() * 2;
+        canvas.width = this.content.width() * 2;
+        canvas.style.height = this.content.height() + 'px';
+        canvas.style.width = this.content.width() + 'px';
     };
     Lib.prototype.clear = function () {
-        this.refit();
-        this.getCurrPage().clear(this.config.bgColor);
+        this.getCurrPage().clear();
     };
     return Lib;
 }());

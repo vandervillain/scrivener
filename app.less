@@ -64,7 +64,7 @@ body {
             div.tool-options {
                 display: none;
                 position: absolute;
-                z-index: 999;
+                z-index: 3;
                 background-color: @nav;
 
                 &.open {
@@ -121,8 +121,23 @@ body {
         padding: 0;
 
         canvas {
+            z-index: 1;
             cursor: crosshair;
             position: fixed;
+
+            &.temp {
+                z-index: 2;
+            }
+        }
+
+        input[type="text"].temp {
+            z-index: 3;
+            position: relative;
+            background-color: transparent;
+            width: 10px;
+            overflow: visible;
+            border: none;
+            //outline: none;
         }
     }
 }

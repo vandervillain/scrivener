@@ -24,12 +24,14 @@ var Page = /** @class */ (function () {
         this.canvas.removeEventListener('touchmove', tool.touchmove, false);
         this.canvas.removeEventListener('touchend', tool.touchend, false);
     };
-    Page.prototype.clear = function (bgColor) {
-        this.ctx.fillStyle = bgColor;
+    Page.prototype.clear = function () {
+        var currFillStyle = this.ctx.fillStyle;
+        this.ctx.fillStyle = 'rgba(0,0,0,1)';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.fillStyle = currFillStyle;
     };
-    Page.prototype.undo = function (bgColor) {
-        this.clear(bgColor);
+    Page.prototype.undo = function () {
+        this.clear();
         if (this.historyIndex > -1) {
             this.historyIndex--;
             for (var i = 0; i < this.history.length; i++) {

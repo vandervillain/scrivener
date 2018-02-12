@@ -51,7 +51,7 @@ body #header .tool-selector {
 body #header .tool-selector div.tool-options {
   display: none;
   position: absolute;
-  z-index: 999;
+  z-index: 3;
   background-color: #222;
 }
 body #header .tool-selector div.tool-options.open {
@@ -89,8 +89,20 @@ body #content {
   padding: 0;
 }
 body #content canvas {
+  z-index: 1;
   cursor: crosshair;
   position: fixed;
+}
+body #content canvas.temp {
+  z-index: 2;
+}
+body #content input[type="text"].temp {
+  z-index: 3;
+  position: relative;
+  background-color: transparent;
+  width: 10px;
+  overflow: visible;
+  border: none;
 }
 @font-face {
   font-family: 'Glyphicons Regular';
