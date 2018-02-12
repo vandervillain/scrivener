@@ -375,8 +375,7 @@ class Textbox extends Tool {
         super.destroy();
 
         if (this.activated) {
-            var yOffset = (this.width * 10 / 2) - 3;
-            this.currPage.ctx.fillText(this.hiddenText.val().toString(), this.value.x, this.value.y + yOffset);
+            this.write();
         }
 
         this.started = false;
@@ -386,14 +385,10 @@ class Textbox extends Tool {
 
     start(x: number, y: number) {
         if (this.activated) {
-            var yOffset = (this.width * 10 / 2) - 3;
-            this.currPage.ctx.fillText(this.hiddenText.val().toString(), this.value.x, this.value.y + yOffset);
+            this.write();
         }
 
         this.started = true;
-        this.activated = false;
-        if (this.hiddenText) this.hiddenText.remove();
-
         this.value = {x: x, y: y, text: ''};
     }
 
@@ -433,9 +428,23 @@ class Textbox extends Tool {
         }
     }
 
+    write() {
+        var strVal = this.hiddenText.val().toString(),
+            yOffset = (this.width * 10 / 2) - 3;
+            
+        if (strVal.length > 0) {
+            this.currPage.ctx.fillText(strVal, this.value.x, this.value.y + yOffset);
+            this.addHistory(this.value);
+        }
+
+        this.activated = false;
+        this.hiddenText.remove();
+    }
+
     redraw(value: {x: number, y: number, text: string}) {
+        var yOffset = (this.width * 10 / 2) - 3;
         this.currPage.ctx.font = this.width * 10 + "px Arial";
-        this.currPage.ctx.fillText(value.text, value.x, value.y)
+        this.currPage.ctx.fillText(value.text, value.x, value.y + yOffset);
     }
 }
 

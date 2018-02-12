@@ -143,8 +143,8 @@ var Lib = /** @class */ (function () {
         var newCanvas = $('<canvas data-page="' + pageNum + '">');
         self.content.append(newCanvas);
         var canvas = newCanvas[0];
-        canvas.height = this.content.height() * 2;
-        canvas.width = this.content.width() * 2;
+        canvas.height = this.content.height();
+        canvas.width = this.content.width();
         canvas.style.height = this.content.height() + 'px';
         canvas.style.width = this.content.width() + 'px';
         var page = new Page(pageNum, canvas);
@@ -178,8 +178,8 @@ var Lib = /** @class */ (function () {
     Lib.prototype.refit = function () {
         var canvas = $('canvas:visible')[0];
         this.content.height(window.innerHeight - this.header.height());
-        canvas.height = this.content.height() * 2;
-        canvas.width = this.content.width() * 2;
+        canvas.height = this.content.height();
+        canvas.width = this.content.width();
         canvas.style.height = this.content.height() + 'px';
         canvas.style.width = this.content.width() + 'px';
     };

@@ -301,8 +301,7 @@ var Textbox = /** @class */ (function (_super) {
     Textbox.prototype.destroy = function () {
         _super.prototype.destroy.call(this);
         if (this.activated) {
-            var yOffset = (this.width * 10 / 2) - 3;
-            this.currPage.ctx.fillText(this.hiddenText.val().toString(), this.value.x, this.value.y + yOffset);
+            this.write();
         }
         this.started = false;
         this.activated = false;
@@ -311,13 +310,9 @@ var Textbox = /** @class */ (function (_super) {
     };
     Textbox.prototype.start = function (x, y) {
         if (this.activated) {
-            var yOffset = (this.width * 10 / 2) - 3;
-            this.currPage.ctx.fillText(this.hiddenText.val().toString(), this.value.x, this.value.y + yOffset);
+            this.write();
         }
         this.started = true;
-        this.activated = false;
-        if (this.hiddenText)
-            this.hiddenText.remove();
         this.value = { x: x, y: y, text: '' };
     };
     Textbox.prototype.move = function (x, y) {
@@ -352,6 +347,15 @@ var Textbox = /** @class */ (function (_super) {
             });
             this.hiddenText.focus();
         }
+    };
+    Textbox.prototype.write = function () {
+        var strVal = this.hiddenText.val().toString(), yOffset = (this.width * 10 / 2) - 3;
+        if (strVal.length > 0) {
+            this.currPage.ctx.fillText(strVal, this.value.x, this.value.y + yOffset);
+            this.addHistory(this.value);
+        }
+        this.activated = false;
+        this.hiddenText.remove();
     };
     Textbox.prototype.redraw = function (value) {
         this.currPage.ctx.font = this.width * 10 + "px Arial";
