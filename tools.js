@@ -299,10 +299,10 @@ var Textbox = /** @class */ (function (_super) {
         this.currPage.ctx.font = this.width * 10 + "px Arial";
     };
     Textbox.prototype.destroy = function () {
-        _super.prototype.destroy.call(this);
         if (this.activated) {
             this.write();
         }
+        _super.prototype.destroy.call(this);
         this.started = false;
         this.activated = false;
         if (this.hiddenText)
@@ -311,9 +311,13 @@ var Textbox = /** @class */ (function (_super) {
     Textbox.prototype.start = function (x, y) {
         if (this.activated) {
             this.write();
+            this.started = false;
+            this.activated = false;
         }
-        this.started = true;
-        this.value = { x: x, y: y, text: '' };
+        else {
+            this.started = true;
+            this.value = { x: x, y: y, text: '' };
+        }
     };
     Textbox.prototype.move = function (x, y) {
         if (this.started) {
@@ -321,31 +325,33 @@ var Textbox = /** @class */ (function (_super) {
         }
     };
     Textbox.prototype.end = function () {
-        this.started = false;
-        if (!this.activated) {
-            // enable text input to canvas
-            this.activated = true;
-            this.hiddenText = $('<input type="text" class="temp">');
-            $(this.currPage.canvas).after(this.hiddenText);
-            this.hiddenText.css({
-                'top': this.value.y - 15,
-                'left': this.value.x,
-                'color': this.color,
-                'font-size': this.width * 10 + 'px',
-                'height': this.width * 10 + 'px',
-                'line-height': this.width * 10 + 'px'
-            });
-            var self = this;
-            this.hiddenText.on('mousedown touchstart', function (e) {
-                self.hiddenText.focus();
-                return false;
-            });
-            this.hiddenText.on('input', function (e) {
-                var strVal = self.hiddenText.val().toString();
-                self.value.text = strVal;
-                self.hiddenText.width(self.currPage.ctx.measureText(strVal).width);
-            });
-            this.hiddenText.focus();
+        if (this.started) {
+            this.started = false;
+            if (!this.activated) {
+                // enable text input to canvas
+                this.activated = true;
+                this.hiddenText = $('<input type="text" class="temp">');
+                $(this.currPage.canvas).after(this.hiddenText);
+                this.hiddenText.css({
+                    'top': this.value.y - 15,
+                    'left': this.value.x,
+                    'color': this.color,
+                    'font-size': this.width * 10 + 'px',
+                    'height': this.width * 10 + 'px',
+                    'line-height': this.width * 10 + 'px'
+                });
+                var self = this;
+                this.hiddenText.on('mousedown touchstart', function (e) {
+                    self.hiddenText.focus();
+                    return false;
+                });
+                this.hiddenText.on('input', function (e) {
+                    var strVal = self.hiddenText.val().toString();
+                    self.value.text = strVal;
+                    self.hiddenText.width(self.currPage.ctx.measureText(strVal).width);
+                });
+                this.hiddenText.focus();
+            }
         }
     };
     Textbox.prototype.write = function () {
@@ -354,12 +360,12 @@ var Textbox = /** @class */ (function (_super) {
             this.currPage.ctx.fillText(strVal, this.value.x, this.value.y + yOffset);
             this.addHistory(this.value);
         }
-        this.activated = false;
         this.hiddenText.remove();
     };
     Textbox.prototype.redraw = function (value) {
+        var yOffset = (this.width * 10 / 2) - 3;
         this.currPage.ctx.font = this.width * 10 + "px Arial";
-        this.currPage.ctx.fillText(value.text, value.x, value.y);
+        this.currPage.ctx.fillText(value.text, value.x, value.y + yOffset);
     };
     return Textbox;
 }(Tool));

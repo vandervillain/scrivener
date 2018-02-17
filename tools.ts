@@ -372,11 +372,11 @@ class Textbox extends Tool {
     }
 
     destroy() {
-        super.destroy();
-
         if (this.activated) {
             this.write();
         }
+
+        super.destroy();
 
         this.started = false;
         this.activated = false;
@@ -386,10 +386,13 @@ class Textbox extends Tool {
     start(x: number, y: number) {
         if (this.activated) {
             this.write();
+            this.started = false;
+            this.activated = false;
         }
-
-        this.started = true;
-        this.value = {x: x, y: y, text: ''};
+        else {
+            this.started = true;
+            this.value = {x: x, y: y, text: ''};
+        }
     }
 
     move(x: number, y: number) {
@@ -399,32 +402,34 @@ class Textbox extends Tool {
     }
 
     end() {
-        this.started = false;
-        if (!this.activated) {
-            // enable text input to canvas
-            this.activated = true;
-            this.hiddenText = $('<input type="text" class="temp">');
-            $(this.currPage.canvas).after(this.hiddenText);
-            this.hiddenText.css({
-                'top': this.value.y - 15,
-                'left': this.value.x,
-                'color': this.color,
-                'font-size': this.width * 10 + 'px',
-                'height': this.width * 10 + 'px',
-                'line-height': this.width * 10 + 'px'
-            });
+        if (this.started) {
+            this.started = false;
+            if (!this.activated) {
+                // enable text input to canvas
+                this.activated = true;
+                this.hiddenText = $('<input type="text" class="temp">');
+                $(this.currPage.canvas).after(this.hiddenText);
+                this.hiddenText.css({
+                    'top': this.value.y - 15,
+                    'left': this.value.x,
+                    'color': this.color,
+                    'font-size': this.width * 10 + 'px',
+                    'height': this.width * 10 + 'px',
+                    'line-height': this.width * 10 + 'px'
+                });
 
-            var self = this;
-            this.hiddenText.on('mousedown touchstart', function(e) {
-                self.hiddenText.focus();
-                return false;
-            });
-            this.hiddenText.on('input', function(e) {
-                var strVal = self.hiddenText.val().toString();
-                self.value.text = strVal;
-                self.hiddenText.width(self.currPage.ctx.measureText(strVal).width);
-            });
-            this.hiddenText.focus();
+                var self = this;
+                this.hiddenText.on('mousedown touchstart', function(e) {
+                    self.hiddenText.focus();
+                    return false;
+                });
+                this.hiddenText.on('input', function(e) {
+                    var strVal = self.hiddenText.val().toString();
+                    self.value.text = strVal;
+                    self.hiddenText.width(self.currPage.ctx.measureText(strVal).width);
+                });
+                this.hiddenText.focus();
+            }
         }
     }
 
@@ -437,7 +442,6 @@ class Textbox extends Tool {
             this.addHistory(this.value);
         }
 
-        this.activated = false;
         this.hiddenText.remove();
     }
 
