@@ -48,6 +48,10 @@ export class Lib {
             self.getCurrPage().redo();
         })
 
+        self.header.find('.save').on('click', e => self.save);
+
+        self.header.find('.load').on('click', e => self.load);
+
         self.header.find('.clear-page').on('click', e => {
             self.clear();
         });
@@ -229,6 +233,14 @@ export class Lib {
         self.header.find('.curr-page').text(self.config.page);
         if (self.config.page <= 1) self.header.find('.prev-page').addClass('disabled');
         else self.header.find('.prev-page').removeClass('disabled');
+    }
+
+    save() {
+
+    }
+
+    load() {
+        
     }
 
     refit() {
