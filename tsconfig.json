@@ -1,9 +1,14 @@
 {
 	"compileOnSave": true,
-	"compilerOptions": {
-		"noImplicitAny": true,
-		"sourceMap": true
-	},
+  "compilerOptions": {
+    //"outDir": "./wwwroot/js",
+    "sourceMap": true,
+    "noImplicitAny": false,
+    "noEmitOnError": true,
+    "removeComments": true,
+    "target": "es5"
+    //"module": "es6"
+  },
 	"include": [
 		"."
 	]

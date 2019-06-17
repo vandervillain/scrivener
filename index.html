@@ -3,63 +3,50 @@
   <head>
     <meta charset="UTF-8">
     <title>scrivener</title>
-    <link href="styles.css" rel="stylesheet" type="text/css">
-    <script>
-      var exports = {};
-
-      function start() {
-        var lib = new Lib();
-      }
-    </script>
-    <script
-    src="https://code.jquery.com/jquery-3.2.1.min.js"
-    integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-    crossorigin="anonymous"></script>
-    <script src="tools.js"></script>
-    <script src="page.js"></script>            
-    <script src="lib.js"></script>
+    <link href="styles.css" rel="stylesheet" type="text/css"> 
   </head>
-  <body onload="start()">
+  <body>
     <div id="header">
       <div class="left">
         <div class="undo-redo">
-          <span class="glyphicons glyphicons-undo undo"></span>
-          <span class="glyphicons glyphicons-redo redo"></span>
+          <span id="undo" class="glyphicons glyphicons-undo"></span>
+          <span id="redo" class="glyphicons glyphicons-redo"></span>
         </div>
         <div class="tool-selector">
-          <span class="glyphicons glyphicons-pen label"></span>
-          <div class="tool-options">
-              <span class="glyphicons glyphicons-pen pen"></span>
-              <span class="glyphicons glyphicons-vector-path-line line"></span>
-              <span class="glyphicons glyphicons-vector-path-square box"></span>
-              <span class="glyphicons glyphicons-font text"></span>
-              <span class="glyphicons glyphicons-stats graph"></span>
+          <span id="curr-tool" class="glyphicons glyphicons-pen"></span>
+          <div id="tool-options">
+              <span id="pen" class="glyphicons glyphicons-pen"></span>
+              <span id="line" class="glyphicons glyphicons-vector-path-line"></span>
+              <span id="box" class="glyphicons glyphicons-vector-path-square"></span>
+              <span id="text" class="glyphicons glyphicons-font"></span>
+              <span id="graph" class="glyphicons glyphicons-stats"></span>
               <div class="color-selector">
-                  <span class="glyphicons glyphicons-tint"></span>
-                  <input type="color" pattern="^#+([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$" />
-                  <div class="recent-colors"></div>
+                  <span id="color-toggle" class="glyphicons glyphicons-tint"></span>
+                  <input id="color-input" type="color" pattern="^#+([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$" />
+                  <div id="recent-colors"></div>
               </div>
           </div>
         </div>
       </div>
       <div class="right">
         <div class='save-load'>
-          <span class="glyphicons glyphicons-cloud-upload save"></span>
-          <span class="glyphicons glyphicons-cloud-download load"></span>
+          <span id="save" class="glyphicons glyphicons-cloud-upload"></span>
+          <span id="load" class="glyphicons glyphicons-cloud-download"></span>
         </div>
         <div class='clear-page'>
-          <span class="glyphicons glyphicons-ban-circle clear-page"></span>
+          <span id="clear-page" class="glyphicons glyphicons-ban-circle"></span>
         </div>
         <div class="page-selector">
-          <span class="glyphicons glyphicons-arrow-left prev-page disabled"></span>
-          <span class="curr-page">1</span>
-          <span class="glyphicons glyphicons-arrow-right next-page"></span>
+          <span id="prev-page" class="glyphicons glyphicons-arrow-left disabled"></span>
+          <span id="curr-page">1</span>
+          <span id="next-page" class="glyphicons glyphicons-arrow-right"></span>
         </div>
         <div class="exit-app">
-          <span class="glyphicons glyphicons-remove"></span>
+          <span id="exit" class="glyphicons glyphicons-remove"></span>
         </div>
       </div>
     </div>
     <div id="content"></div>
+    <script src="main.js"></script>
   </body>
 </html>

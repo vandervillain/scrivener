@@ -60,20 +60,20 @@ body #header .tool-selector div.tool-options.open {
 body #header .tool-selector div.tool-options .color-selector {
   position: relative;
 }
-body #header .tool-selector div.tool-options .color-selector .recent-colors {
+body #header .tool-selector div.tool-options .color-selector #recent-colors {
   display: inline-flex;
   position: absolute;
   top: 0;
   left: 50px;
   background-color: #222;
 }
-body #header .tool-selector div.tool-options .color-selector .recent-colors span {
+body #header .tool-selector div.tool-options .color-selector #recent-colors span {
   display: inline-block;
 }
 body #header .tool-selector div.tool-options .color-selector input[type=color] {
   display: none;
 }
-body #header .page-selector .curr-page {
+body #header #page-selector #curr-page {
   display: inline-block;
   line-height: 46px;
   font-size: 30px;
@@ -106,8 +106,8 @@ body #content input[type="text"].temp {
 }
 @font-face {
   font-family: 'Glyphicons Regular';
-  src: url('glyphs/glyphicons-regular.eot');
-  src: url('glyphs/glyphicons-regular.eot?#iefix') format('embedded-opentype'), url('glyphs/glyphicons-regular.woff2') format('woff2'), url('glyphs/glyphicons-regular.woff') format('woff'), url('glyphs/glyphicons-regular.ttf') format('truetype'), url('glyphs/glyphicons-regular.svg#glyphiconsregular') format('svg');
+  src: url('src/styles/glyphs/glyphicons-regular.eot');
+  src: url('src/styles/glyphs/glyphicons-regular.eot?#iefix') format('embedded-opentype'), url('src/styles/glyphs/glyphicons-regular.woff2') format('woff2'), url('src/styles/glyphs/glyphicons-regular.woff') format('woff'), url('src/styles/glyphs/glyphicons-regular.ttf') format('truetype'), url('src/styles/glyphs/glyphicons-regular.svg#glyphiconsregular') format('svg');
 }
 .glyphicons {
   display: inline-block;

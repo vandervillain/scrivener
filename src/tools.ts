@@ -1,4 +1,6 @@
-class Tool {
+import { Page, Action } from "./page";
+
+export class Tool {
     type: ToolType;
     color: string;
     width: number;
@@ -16,38 +18,37 @@ class Tool {
     touchend: EventListener;
 
     constructor(type: ToolType, color: string, width: number) {
-        var self = this;
         this.type = type;
         this.color = color;
         this.width = width;
         this.started = false;
 
-        this.mousedown = function(e: MouseEvent) {
-            var x = e.pageX - self.currPage.canvas.offsetLeft, y = e.pageY - self.currPage.canvas.offsetTop;
-            self.start.call(self, x, y);
+        this.mousedown = (e: MouseEvent) => {
+            var x = e.pageX - this.currPage.canvas.offsetLeft, y = e.pageY - this.currPage.canvas.offsetTop;
+            this.start.call(this, x, y);
         };
 
         this.mousemove = function(e: MouseEvent) {
-            var x = e.pageX - self.currPage.canvas.offsetLeft, y = e.pageY - self.currPage.canvas.offsetTop;
-            self.move.call(self, x, y);
+            var x = e.pageX - this.currPage.canvas.offsetLeft, y = e.pageY - this.currPage.canvas.offsetTop;
+            this.move.call(this, x, y);
         };
     
 	    this.mouseup = function(e: MouseEvent) {
-            self.end.call(self);
+            this.end.call(this);
         };
 
 	    this.touchstart = function(e: TouchEvent) {
-            var x = e.touches[0].pageX - self.currPage.canvas.offsetLeft, y = e.touches[0].pageY - self.currPage.canvas.offsetTop;
-            self.start.call(self, x, y);
+            var x = e.touches[0].pageX - this.currPage.canvas.offsetLeft, y = e.touches[0].pageY - this.currPage.canvas.offsetTop;
+            this.start.call(this, x, y);
         };
 
 	    this.touchmove = function(e: TouchEvent) {
-            var x = e.touches[0].pageX - self.currPage.canvas.offsetLeft, y = e.touches[0].pageY - self.currPage.canvas.offsetTop;
-            self.move.call(self, x, y);
+            var x = e.touches[0].pageX - this.currPage.canvas.offsetLeft, y = e.touches[0].pageY - this.currPage.canvas.offsetTop;
+            this.move.call(this, x, y);
         };
     
 	    this.touchend = function(e: TouchEvent) {
-            self.end.call(self);
+            this.end.call(this);
         };
     }
 
@@ -118,7 +119,7 @@ class Tool {
     }
 }
 
-class Pen extends Tool {
+export class Pen extends Tool {
     value: {x: number, y: number}[];
 
     constructor(color: string, width: number) { 
@@ -172,7 +173,7 @@ class Pen extends Tool {
     }
 }
 
-class Line extends Tool {
+export class Line extends Tool {
     actualPage: Page;
     tempPage: Page;
     value: {
@@ -194,7 +195,7 @@ class Line extends Tool {
 
         var tempCanvas = document.createElement('canvas');
         tempCanvas.className = 'temp';
-        $(this.actualPage.canvas).after(tempCanvas);
+        this.actualPage.canvas.after(tempCanvas);
         tempCanvas.width = this.actualPage.canvas.width;
         tempCanvas.height = this.actualPage.canvas.height;
 
@@ -261,7 +262,7 @@ class Line extends Tool {
     }
 }
 
-class Box extends Tool {
+export class Box extends Tool {
     actualPage: Page;
     tempPage: Page;
     value: {
@@ -283,7 +284,7 @@ class Box extends Tool {
 
         var tempCanvas = document.createElement('canvas');
         tempCanvas.className = 'temp';
-        $(this.actualPage.canvas).after(tempCanvas);
+        this.actualPage.canvas.after(tempCanvas);
         tempCanvas.width = this.actualPage.canvas.width;
         tempCanvas.height = this.actualPage.canvas.height;
 
@@ -355,9 +356,9 @@ class Box extends Tool {
     }
 }
 
-class Textbox extends Tool {
+export class Textbox extends Tool {
     value: {x: number, y: number, text: string};
-    hiddenText: JQuery;
+    hiddenText: HTMLInputElement;
     activated: boolean;
 
     constructor(color: string, width: number) {
@@ -407,26 +408,26 @@ class Textbox extends Tool {
             if (!this.activated) {
                 // enable text input to canvas
                 this.activated = true;
-                this.hiddenText = $('<input type="text" class="temp">');
-                $(this.currPage.canvas).after(this.hiddenText);
-                this.hiddenText.css({
-                    'top': this.value.y - 15,
-                    'left': this.value.x,
-                    'color': this.color,
-                    'font-size': this.width * 10 + 'px',
-                    'height': this.width * 10 + 'px',
-                    'line-height': this.width * 10 + 'px'
-                });
+                this.hiddenText = document.createElement('input');
+                this.hiddenText.type = 'text';
+                this.hiddenText.className = 'temp';
+                this.currPage.canvas.after(this.hiddenText);
 
-                var self = this;
-                this.hiddenText.on('mousedown touchstart', function(e) {
-                    self.hiddenText.focus();
+                this.hiddenText.style.top = this.value.y - 15 + "px";
+                this.hiddenText.style.left = this.value.x + "px";
+                this.hiddenText.style.color = this.color;
+                this.hiddenText.style.fontSize = this.width * 10 + 'px';
+                this.hiddenText.style.height = this.width * 10 + 'px';
+                this.hiddenText.style.lineHeight = this.width * 10 + 'px';
+
+                this.hiddenText.addEventListener('mousedown touchstart', (e) => {
+                    this.hiddenText.focus();
                     return false;
                 });
-                this.hiddenText.on('input', function(e) {
-                    var strVal = self.hiddenText.val().toString();
-                    self.value.text = strVal;
-                    self.hiddenText.width(self.currPage.ctx.measureText(strVal).width);
+                this.hiddenText.addEventListener('input', (e) => {
+                    var strVal = this.hiddenText.value.toString();
+                    this.value.text = strVal;
+                    this.hiddenText.style.width = this.currPage.ctx.measureText(strVal).width + "px";
                 });
                 this.hiddenText.focus();
             }
@@ -434,7 +435,7 @@ class Textbox extends Tool {
     }
 
     write() {
-        var strVal = this.hiddenText.val().toString(),
+        var strVal = this.hiddenText.value.toString(),
             yOffset = (this.width * 10 / 2) - 3;
             
         if (strVal.length > 0) {
@@ -452,7 +453,7 @@ class Textbox extends Tool {
     }
 }
 
-enum ToolType {
+export enum ToolType {
     Pen,
     Line,
     Box,

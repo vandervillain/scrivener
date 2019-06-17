@@ -1,4 +1,6 @@
-class Page {
+import { Tool, ToolType } from "./tools";
+
+export class Page {
     id: number;
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
@@ -16,23 +18,23 @@ class Page {
     applyListeners(tool: Tool) {
         tool.currPage = this;
 
-        this.canvas.addEventListener('mousedown', tool.mousedown, false);
-        this.canvas.addEventListener('mousemove', tool.mousemove, false);
-	    this.canvas.addEventListener('mouseup', tool.mouseup, false);
-	    this.canvas.addEventListener('touchstart', tool.touchstart, false);
-	    this.canvas.addEventListener('touchmove', tool.touchmove, false);
-	    this.canvas.addEventListener('touchend', tool.touchend, false);
+        this.canvas.addEventListener('mousedown', e => tool.mousedown(e), false);
+        this.canvas.addEventListener('mousemove', e => tool.mousemove(e), false);
+	    this.canvas.addEventListener('mouseup', e => tool.mouseup(e), false);
+	    this.canvas.addEventListener('touchstart', e => tool.touchstart(e), false);
+	    this.canvas.addEventListener('touchmove', e => tool.touchmove(e), false);
+	    this.canvas.addEventListener('touchend', e => tool.touchend(e), false);
     }
 
     removeListeners(tool: Tool) {
         tool.currPage = null;
 
-        this.canvas.removeEventListener('mousedown', tool.mousedown, false);
-        this.canvas.removeEventListener('mousemove', tool.mousemove, false);
-	    this.canvas.removeEventListener('mouseup', tool.mouseup, false);
-	    this.canvas.removeEventListener('touchstart', tool.touchstart, false);
-	    this.canvas.removeEventListener('touchmove', tool.touchmove, false);
-	    this.canvas.removeEventListener('touchend', tool.touchend, false);
+        this.canvas.removeEventListener('mousedown', e => tool.mousedown(e), false);
+        this.canvas.removeEventListener('mousemove', e => tool.mousemove(e), false);
+	    this.canvas.removeEventListener('mouseup', e => tool.mouseup(e), false);
+	    this.canvas.removeEventListener('touchstart', e => tool.touchstart(e), false);
+	    this.canvas.removeEventListener('touchmove', e => tool.touchmove(e), false);
+	    this.canvas.removeEventListener('touchend', e => tool.touchend(e), false);
     }
 
     clear() {
@@ -65,7 +67,7 @@ class Page {
     }
 }
 
-interface Action {
+export interface Action {
     toolType: ToolType;
     color: string,
     width: number;
